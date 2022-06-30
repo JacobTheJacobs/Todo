@@ -3,13 +3,14 @@ import Todo from "../components/ToDo";
 import styles from "../styles/Todo.module.css";
 import Head from "next/head";
 import { ReactSortable } from "react-sortablejs";
+import { motion } from 'framer-motion';
+
 
 export default function Home() {
+    //inital todo 
     const [todoArray, setTodoArray] = useState([]);
     const [input, setInput] = useState("");
     const [todoInitialized, setTodoInitialized] = useState(false);
-
-    ////////////////////////////////
     //updating todo
     const [isEdit, setIsEdit] = useState(false);
     const [id, setId] = useState(-1);
@@ -33,8 +34,11 @@ export default function Home() {
     }, [todoInitialized]);
     */
 
+    //input changing function
     const handleInputChange = (e) => setInput(e.target.value);
 
+
+    //add todo to todos array
     const handleAdd = (e) => {
         e.preventDefault();
         if (input) {
@@ -52,6 +56,7 @@ export default function Home() {
         console.log(todoArray);
     };
 
+    //check todo is done
     const handleComplete = (itemID) => {
         todoArray.map((item) => {
             if (item.id === itemID) {
@@ -61,31 +66,31 @@ export default function Home() {
         setTodoArray([...todoArray]);
     };
 
+    //delete todo
     const handleDelete = (itemID) => {
         setTodoArray(todoArray.filter((item) => item.id !== itemID));
     };
 
- 
+    //show todo text in input box
     const handleUpdate = (itemID) => {
-        //find item by id
-                //find item by id
+
                 const item = todoArray.find((item) => item.id === itemID);
-                //update item
                 console.log(item.todo)
                 setInput(item.todo);
                 setIsEdit(true);
                 setId(itemID);
-                //update todoArray
-                //setTodoArray([...todoArray]);
+
     }
 
+    //update todo
     const handleUpdateAdd = (e) => {
-        e.preventDefault();
-      console.log(input)
-      //find item by id and update todo
+      e.preventDefault();
+
       todoArray.map((item) => {
         if (item.id === id) {
-          item.todo = input;
+            if(!item.isDone){
+                item.todo = input;
+            }
         }
       });
       setTodoArray([...todoArray]);
@@ -117,9 +122,32 @@ export default function Home() {
             <div
             style={{
                 textAlign: "center",
+                marginBottom: "60px",
             }}
         >
-            <h1 style={{fontSize:'3rem'}}>TODO</h1>
+            <motion.div initial="hidden" animate="visible" whileHover={{
+  position: 'relative',
+  zIndex: 1,
+  background: 'white',
+  scale: [1, 1.4, 1.2],
+  rotate: [0, 10, -10, 0],
+  transition: {
+    duration: .2
+  }
+}} variants={{
+  hidden: {
+    scale: .8,
+    opacity: 0
+  },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      delay: .4
+    }
+  },
+}}>    <h1 style={{fontSize:'3rem'}}>TODO</h1></motion.div>
+        
             <form onSubmit={isEdit ? handleUpdateAdd:handleAdd}>
                 <input
                     className={styles.input}
@@ -144,6 +172,13 @@ export default function Home() {
             >
                 {todoArray.map((item, id) => {
                     return (
+                        <motion.div key={id} className="card" 
+                        whileHover={{
+                            scale: 1.08,
+                            transition: {
+                              duration: .8
+                            }
+                          }}>
                         <Todo
                             key={id}
                             id={item.id}
@@ -153,6 +188,7 @@ export default function Home() {
                             isDone={item.isDone}
                             handleUpdate={handleUpdate}
                             />
+                            </motion.div>
                     );
                 })}
             </ReactSortable>
