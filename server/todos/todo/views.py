@@ -11,20 +11,26 @@ from rest_framework.decorators import api_view
 @csrf_exempt
 @api_view(['GET', 'POST'])
 def todo_list(request):
-    print(request)
-    
+    list_of_todos=[]
     if request.method == 'GET':
         print("----------------------------------------------------------")
         todos = Todo.objects.all()
         todos_serializer = TodoSerializer(todos, many=True)
         return JsonResponse(todos_serializer.data, safe=False)
     
-    
     elif request.method == 'POST':
-        tutorial_data = JSONParser().parse(request)
-        tutorial_serializer = TodoSerializer(data=tutorial_data)
-        if tutorial_serializer.is_valid():
-            tutorial_serializer.save()
-            return JsonResponse(tutorial_serializer.data, status=status.HTTP_201_CREATED) 
-        return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        print(request)
+        todo_list = JSONParser().parse(request)
+        print(todo_list)
+        for todo in todo_list:
+            print(todo)
+            todo = TodoSerializer(data=todo)
+            if todo.is_valid():
+                todo.save()
+                list_of_todos.append(todo)
+            else:
+                return JsonResponse(todo.errors, status=status.HTTP_400_BAD_REQUEST)
+       
+        token = {'abcd': '1234'}
+        return JsonResponse(token, status=status.HTTP_201_CREATED) 
+       
