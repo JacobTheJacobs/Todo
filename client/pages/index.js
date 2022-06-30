@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import ToDoInput from "../components/ToDoInput";
-import TodosContainer from "../components/TodosContainer";
+import Todo from "../components/ToDo";
+import styles from "../styles/Todo.module.css";
 import Head from "next/head";
+import { ReactSortable } from "react-sortablejs";
 
 export default function Home() {
     const [todoArray, setTodoArray] = useState([]);
@@ -11,8 +12,8 @@ export default function Home() {
     ////////////////////////////////
     //updating todo
     const [isEdit, setIsEdit] = useState(false);
-    const [editTodo, setEditTodo] = useState("");
-
+    const [id, setId] = useState(-1);
+/*
     //fetch data from api
     useEffect(() => {
         if (!todoInitialized) {
@@ -30,8 +31,8 @@ export default function Home() {
         }
         setTodoInitialized(true);
     }, [todoInitialized]);
+    */
 
-    //create todo
     const handleInputChange = (e) => setInput(e.target.value);
 
     const handleAdd = (e) => {
@@ -43,6 +44,7 @@ export default function Home() {
                     id: todoArray.length + 1,
                     todo: input,
                     isDone: false,
+                    
                 },
             ]);
             setInput("");
@@ -63,6 +65,33 @@ export default function Home() {
         setTodoArray(todoArray.filter((item) => item.id !== itemID));
     };
 
+ 
+    const handleUpdate = (itemID) => {
+        //find item by id
+                //find item by id
+                const item = todoArray.find((item) => item.id === itemID);
+                //update item
+                console.log(item.todo)
+                setInput(item.todo);
+                setIsEdit(true);
+                setId(itemID);
+                //update todoArray
+                //setTodoArray([...todoArray]);
+    }
+
+    const handleUpdateAdd = (e) => {
+        e.preventDefault();
+      console.log(input)
+      //find item by id and update todo
+      todoArray.map((item) => {
+        if (item.id === id) {
+          item.todo = input;
+        }
+      });
+      setTodoArray([...todoArray]);
+      setInput("");
+      setIsEdit(false);
+    }
     return (
         <>
             <Head>
@@ -85,18 +114,49 @@ export default function Home() {
                 />
             </Head>
 
-            <ToDoInput
-                input={input}
-                handleInputChange={handleInputChange}
-                handleAdd={handleAdd}
-            />
-            <TodosContainer
-                //add
-                todoArray={todoArray}
-                setTodoArray={setTodoArray}
-                handleComplete={handleComplete}
-                handleDelete={handleDelete}
-            />
+            <div
+            style={{
+                textAlign: "center",
+            }}
+        >
+            <h1 style={{fontSize:'3rem'}}>TODO</h1>
+            <form onSubmit={isEdit ? handleUpdateAdd:handleAdd}>
+                <input
+                    className={styles.input}
+                    type="text"
+                    placeholder="Create a new todo..."
+                    aria-label="Create a new todo..."
+                    value={input}
+                    onChange={handleInputChange}
+                />
+                <button className={styles.submit_btn} type="submit">
+                    Submit
+                </button>
+            </form>
+        </div>
+             <ul className={styles.container}>
+            <ReactSortable
+                list={todoArray}
+                setList={setTodoArray}
+                delayOnTouchOnly={true}
+                delay={200}
+                animation={300}
+            >
+                {todoArray.map((item, id) => {
+                    return (
+                        <Todo
+                            key={id}
+                            id={item.id}
+                            todo={item.todo}
+                            handleComplete={handleComplete}
+                            handleDelete={handleDelete}
+                            isDone={item.isDone}
+                            handleUpdate={handleUpdate}
+                            />
+                    );
+                })}
+            </ReactSortable>
+        </ul>
         </>
     );
 }
