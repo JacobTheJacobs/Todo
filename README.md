@@ -3,7 +3,7 @@ Made With Django And React & Next js
 
 
 ## installation
-install backend in requirements.txt file
+install server requirements.txt file
 
 install front npm i
 
