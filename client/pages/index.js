@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 const URL = "https://django-deploy-jjjjj.herokuapp.com/todo/";
 export default function Home() {
-    //inital todo
+    //initial todo
     const [todoArray, setTodoArray] = useState([]);
     const [input, setInput] = useState("");
     const [todoInitialized, setTodoInitialized] = useState(false);
@@ -54,7 +54,7 @@ export default function Home() {
     //input changing function
     const handleInputChange = (e) => setInput(e.target.value);
 
-    //add todo to todos array
+    //add todo to todo array
     const handleAdd = (e) => {
         e.preventDefault();
         //check input update accoordingly
@@ -81,9 +81,12 @@ export default function Home() {
         });
         //update array
         setTodoArray([...todoArray]);
+        //update the array if changed local storage keep it as it is
+        const localStorageData = JSON.parse(localStorage.getItem("todo"));
+        setTodoDb(localStorageData);
     };
 
-    //delete todo
+    // delete todo
     const handleDelete = (itemID) => {
         setTodoArray(todoArray.filter((item) => item.id !== itemID));
     };
@@ -198,7 +201,7 @@ export default function Home() {
                 />
                 <meta
                     name="description"
-                    content="This todo app was created using nextjs, sass, react-sortablejs, and localStorage. Challenge by Frontend Mentor."
+                    content="This todo app was created using nextjs, sass, react-sortablejs, and localStorage. Chtodoenge by Frontend Mentor."
                 />
                 <link
                     rel="shortcut icon"
@@ -227,29 +230,31 @@ export default function Home() {
                     }}
                 >
                     {" "}
-                    <h1 style={{ fontSize: "3rem" }}>TODO</h1>
+                    <h1 style={{ fontSize: "3rem", color: "#4CAF50" }}>TODO</h1>
                 </motion.div>
                 {/*TITLE*/}
-                {/*INPUT*/}
-                <form onSubmit={isEdit ? handleUpdateAdd : handleAdd}>
-                    <input
-                        className={styles.input}
-                        type="text"
-                        placeholder="Create a new todo..."
-                        aria-label="Create a new todo..."
-                        value={input}
-                        onChange={handleInputChange}
-                    />
-                    <button className={styles.submit_btn} type="submit">
-                        Submit
-                    </button>
-                </form>
-                {/*INPUT*/}
                 <br></br>
                 {/*STATE BUTTONS*/}
                 <div>
                     {isArrayChanged ? (
-                        <div>
+                        <motion.div
+                            key={id}
+                            initial="hidden"
+                            animate="visible"
+                            variants={{
+                                hidden: {
+                                    scale: 0.9,
+                                    opacity: 0,
+                                },
+                                visible: {
+                                    scale: 1,
+                                    opacity: 1,
+                                    transition: {
+                                        delay: 0.3,
+                                    },
+                                },
+                            }}
+                        >
                             {" "}
                             <button
                                 className={styles.stateBtn}
@@ -264,10 +269,32 @@ export default function Home() {
                             >
                                 DISCARD STATE
                             </button>
-                        </div>
-                    ) : null}
+                        </motion.div>
+                    ) : (
+                        "State is not changed Yet"
+                    )}
                 </div>
                 {/*STATE BUTTONS*/}
+                <br></br>
+                {/*INPUT*/}
+                <div className={styles.container}>
+                    {" "}
+                    <form onSubmit={isEdit ? handleUpdateAdd : handleAdd}>
+                        <input
+                            className={styles.input}
+                            type="text"
+                            placeholder="Create a new todo..."
+                            aria-label="Create a new todo..."
+                            value={input}
+                            onChange={handleInputChange}
+                        />
+                        <button className={styles.submit_btn} type="submit">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+
+                {/*INPUT*/}
             </div>
 
             {/*TODO LIST*/}
@@ -305,7 +332,7 @@ export default function Home() {
                                     },
                                 }}
                             >
-                                {/*TODO*/}
+                                {/*todo*/}
                                 <li className={styles.todo} key={item.id}>
                                     <div
                                         onClick={() => handleComplete(item.id)}
@@ -370,7 +397,7 @@ export default function Home() {
                                         </div>
                                     </div>
                                 </li>
-                                {/*TODO*/}
+                                {/*todo*/}
                             </motion.div>
                         );
                     })}
@@ -405,7 +432,7 @@ export default function Home() {
                         <div key={todo.id}>
                             <div>id: {todo.id}</div>
                             <span></span>
-                            <div>todo: {todo.todo}</div>
+                            <div> todo: {todo.todo} </div>
                             <div>isDone: {todo.isDone ? "DONE" : "UNDONE"}</div>
                             <br></br>
                         </div>
@@ -429,7 +456,7 @@ export default function Home() {
                         <div key={todo.id}>
                             <div>id: {todo.id}</div>
                             <span></span>
-                            <div>todo: {todo.todo}</div>
+                            <div> todo: {todo.todo} </div>
                             <div>isDone: {todo.isDone ? "DONE" : "UNDONE"}</div>
                             <br></br>
                         </div>
