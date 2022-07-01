@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import Todo from "../components/ToDo";
 import styles from "../styles/Todo.module.css";
 import Head from "next/head";
 import { ReactSortable } from "react-sortablejs";
 import { motion } from "framer-motion";
 
+const URL = "https://django-deploy-jjjjj.herokuapp.com/todo/";
 export default function Home() {
     //inital todo
     const [todoArray, setTodoArray] = useState([]);
@@ -20,7 +20,7 @@ export default function Home() {
     //fetch data from api
     useEffect(() => {
         if (!todoInitialized) {
-            fetch("http://127.0.0.1:8000/todo")
+            fetch(URL)
                 .then((res) => {
                     return res.json();
                 })
@@ -30,19 +30,25 @@ export default function Home() {
                     localStorage.setItem("todo", JSON.stringify(data));
                     setTodoDb(data);
                 })
-
+                //if something happend retunr error
                 .catch((err) => {
                     console.log(err);
                 });
         }
+        //set initialized to true to stop the insane loop
         setTodoInitialized(true);
     }, [todoInitialized]);
 
+    //for checking against local storage data
     useEffect(() => {
-        if (todoArray.length > 0) {
-            let res = compareArrays();
-            setIsArrayChanged(res);
+        function fetchBusinesses() {
+            if (todoArray.length > 0) {
+                let res = compareArrays();
+                setIsArrayChanged(res);
+            }
         }
+        //if array is changed, update localStorage
+        fetchBusinesses();
     }, [todoArray]);
 
     //input changing function
@@ -51,6 +57,7 @@ export default function Home() {
     //add todo to todos array
     const handleAdd = (e) => {
         e.preventDefault();
+        //check input update accoordingly
         if (input) {
             setTodoArray([
                 ...todoArray,
@@ -67,10 +74,12 @@ export default function Home() {
     //check todo is done
     const handleComplete = (itemID) => {
         todoArray.map((item) => {
+            //compare ids to find the item
             if (item.id === itemID) {
                 item.isDone = !item.isDone;
             }
         });
+        //update array
         setTodoArray([...todoArray]);
     };
 
@@ -79,19 +88,20 @@ export default function Home() {
         setTodoArray(todoArray.filter((item) => item.id !== itemID));
     };
 
-    //show todo text in input box
+    //show todo text in input box at the top
     const handleUpdate = (itemID) => {
         const item = todoArray.find((item) => item.id === itemID);
-        console.log(item.todo);
+        //update the input
         setInput(item.todo);
         setIsEdit(true);
+        //for updating the todo next function
         setId(itemID);
     };
 
     //update todo
     const handleUpdateAdd = (e) => {
         e.preventDefault();
-
+        //iterate
         todoArray.map((item) => {
             if (item.id === id) {
                 if (!item.isDone) {
@@ -99,15 +109,22 @@ export default function Home() {
                 }
             }
         });
+        //update array
         setTodoArray([...todoArray]);
         setInput("");
+        //close the input for the update empty it
         setIsEdit(false);
     };
 
+    //for comparing local storage array that we got in the beginning with
+    // the current array we have in the state after we changed it or not
     const compareArrays = () => {
+        //get the array from local storage
         const localStorageData = JSON.parse(localStorage.getItem("todo"));
+        //for checking todo with linear search for the specific todo item
         let flag = false;
         if (localStorageData) {
+            //first chekc the lehngth of the arrays reduce complexity i think
             if (localStorageData.length !== todoArray.length) {
                 console.log(localStorageData.length, todoArray.length);
                 return true;
@@ -116,8 +133,20 @@ export default function Home() {
             for (let i = 0; i < localStorageData.length; i++) {
                 for (let j = 0; j < todoArray.length; j++) {
                     if (localStorageData[i].id === todoArray[j].id) {
-                        if (localStorageData[i].todo !== todoArray[j].todo) {
+                        //check first is done property
+                        if (
+                            localStorageData[i].isDone !== todoArray[j].isDone
+                        ) {
+                            //updating the value
                             flag = true;
+                            //return that we got an changed array
+                            break;
+                        }
+                        //check second todo property
+                        if (localStorageData[i].todo !== todoArray[j].todo) {
+                            //updating the value
+                            flag = true;
+                            //return that we got an changed array
                             break;
                         }
                     }
@@ -127,27 +156,28 @@ export default function Home() {
         return flag;
     };
 
+    //saving  local state to DB
     const handleSaveLocalChanges = () => {
         //send data back to api
         const data = JSON.stringify(todoArray);
-        fetch("http://localhost:8000/todo", {
+        fetch(URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: data,
         })
+            //response from api
             .then((res) => {
                 return res.json();
             })
-            .then((data) => {
-                console.log(data);
-            })
+            //error
             .catch((err) => {
                 console.log(err);
             });
     };
 
+    //Discard changes
     const handleDiscardLocalChanges = () => {
         //get data from localStorage
         const localStorageData = JSON.parse(localStorage.getItem("todo"));
@@ -156,6 +186,7 @@ export default function Home() {
 
     return (
         <>
+            {/*HEAD TAG*/}
             <Head>
                 <title>
                     Todo app with ThemeSwitch and localStorage | Next.js and
@@ -175,7 +206,8 @@ export default function Home() {
                     href="/images/favicon-32x32.png"
                 />
             </Head>
-
+            {/*HEAD TAG*/}
+            {/*TITLE*/}
             <div
                 style={{
                     textAlign: "center",
@@ -197,7 +229,8 @@ export default function Home() {
                     {" "}
                     <h1 style={{ fontSize: "3rem" }}>TODO</h1>
                 </motion.div>
-
+                {/*TITLE*/}
+                {/*INPUT*/}
                 <form onSubmit={isEdit ? handleUpdateAdd : handleAdd}>
                     <input
                         className={styles.input}
@@ -211,7 +244,9 @@ export default function Home() {
                         Submit
                     </button>
                 </form>
+                {/*INPUT*/}
                 <br></br>
+                {/*STATE BUTTONS*/}
                 <div>
                     {isArrayChanged ? (
                         <div>
@@ -224,6 +259,7 @@ export default function Home() {
                             </button>
                             <button
                                 className={styles.stateBtn}
+                                style={{ backgroundColor: "red" }}
                                 onClick={handleDiscardLocalChanges}
                             >
                                 DISCARD STATE
@@ -231,8 +267,10 @@ export default function Home() {
                         </div>
                     ) : null}
                 </div>
+                {/*STATE BUTTONS*/}
             </div>
 
+            {/*TODO LIST*/}
             <ul className={styles.container}>
                 <ReactSortable
                     list={todoArray}
@@ -267,21 +305,83 @@ export default function Home() {
                                     },
                                 }}
                             >
-                                <Todo
-                                    key={id}
-                                    id={item.id}
-                                    todo={item.todo}
-                                    handleComplete={handleComplete}
-                                    handleDelete={handleDelete}
-                                    isDone={item.isDone}
-                                    handleUpdate={handleUpdate}
-                                />
+                                {/*TODO*/}
+                                <li className={styles.todo} key={item.id}>
+                                    <div
+                                        onClick={() => handleComplete(item.id)}
+                                        className={styles.checkboxContainer}
+                                    >
+                                        {item.isDone ? (
+                                            <div
+                                                className={
+                                                    styles.checkbox +
+                                                    " " +
+                                                    styles.checked
+                                                }
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="11"
+                                                    height="9"
+                                                >
+                                                    <path
+                                                        stroke="#FFF"
+                                                        strokeWidth="2"
+                                                        d="M1 4.304L3.696 7l6-6"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        ) : (
+                                            <div
+                                                className={styles.checkbox}
+                                            ></div>
+                                        )}
+                                    </div>
+
+                                    {item.isDone ? (
+                                        <p>
+                                            <s style={{ opacity: "0.3" }}>
+                                                {item.todo}
+                                            </s>
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p
+                                                onClick={() =>
+                                                    handleUpdate(item.id)
+                                                }
+                                            >
+                                                {item.todo}
+                                            </p>
+                                        </>
+                                    )}
+
+                                    <div onClick={() => handleDelete(item.id)}>
+                                        <div>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="26"
+                                                height="26"
+                                                viewBox="0 0 16 16"
+                                                className={styles.delete}
+                                            >
+                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </li>
+                                {/*TODO*/}
                             </motion.div>
                         );
                     })}
                 </ReactSortable>
             </ul>
-
+            {/*TODO LIST*/}
+            <br></br>
+            <br></br>
+            <br></br>
+            <hr></hr>
+            {/*LOGS*/}
             <div
                 style={{
                     textAlign: "center",
@@ -302,7 +402,7 @@ export default function Home() {
                 <hr></hr>
                 {todoArray?.map((todo) => {
                     return (
-                        <div>
+                        <div key={todo.id}>
                             <div>id: {todo.id}</div>
                             <span></span>
                             <div>todo: {todo.todo}</div>
@@ -326,7 +426,7 @@ export default function Home() {
                 <hr></hr>
                 {todoDb?.map((todo) => {
                     return (
-                        <div>
+                        <div key={todo.id}>
                             <div>id: {todo.id}</div>
                             <span></span>
                             <div>todo: {todo.todo}</div>
@@ -336,6 +436,7 @@ export default function Home() {
                     );
                 })}
             </div>
+            {/*LOGS*/}
         </>
     );
 }

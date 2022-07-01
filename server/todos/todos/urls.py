@@ -19,6 +19,6 @@ from django.urls import re_path as url
 from django.conf.urls import include 
  
 urlpatterns = [ 
-           
-    url(r'^', include('todo.urls')),
+    url('admin/', admin.site.urls),       
+    url('', include('todo.urls')),
 ]
