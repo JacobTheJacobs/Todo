@@ -1,4 +1,7 @@
-# Todo
+
+
+# *Monolithe approach For Deployment 
+
 Made With Django And React & Next js
 
 
