@@ -147,6 +147,9 @@
   }
 .submit_btn{
   font-size: 0.5em;
+  height: 38px;
+	font-weight: bold;
+	width: 90px;
 }
  
   .p{

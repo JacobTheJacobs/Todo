@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import styles from "../styles/Todo.module.css";
 import Head from "next/head";
 import { motion } from "framer-motion";
-import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import Login from "./Login";
 import Logs from "./Logs";
 import { ReactSortable } from "react-sortablejs";
@@ -112,7 +111,12 @@ export default function Home() {
 
     // delete todo
     const handleDelete = (itemID) => {
-        setTodoArray(todoArray.filter((item) => item.id !== itemID));
+        //alert confirm delete todo
+        if (window.confirm("Are you sure you want to delete this todo?")) {
+            setTodoArray(todoArray.filter((item) => item.id !== itemID));
+        } else {
+            return;
+        }
     };
 
     //show todo text in input box at the top
@@ -437,8 +441,7 @@ export default function Home() {
             </ul>
             {/*TODO LIST*/}
             <br></br>
-            <br></br>
-            <br></br>
+
             <hr></hr>
             {/*LOGS*/}
             <Logs user={user} todoArray={todoArray} todoDb={todoDb} />
