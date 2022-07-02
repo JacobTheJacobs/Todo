@@ -7,8 +7,8 @@ import Login from "./Login";
 import Logs from "./Logs";
 import { ReactSortable } from "react-sortablejs";
 
-//const URL = "https://django-deploy-jjjjj.herokuapp.com/todo/";
-const URL = "http://localhost:8000/todo/";
+const URL = "https://django-deploy-jjjjj.herokuapp.com/todo/";
+//const URL = "http://localhost:8000/todo/";
 export default function Home() {
     //initial todo
     const [todoArray, setTodoArray] = useState([]);
@@ -26,6 +26,20 @@ export default function Home() {
     //fetch data from api
     useEffect(() => {
         //get access token from session
+        const access_token = sessionStorage.getItem("access_token");
+        if (
+            !access_token ||
+            access_token.length === 0 ||
+            access_token === "null" ||
+            access_token === "undefined"
+        ) {
+            //get todo from api
+            setModalOpen(true);
+
+            return;
+        } else {
+            setUser(access_token);
+        }
 
         if (!todoInitialized) {
             fetch(URL)
@@ -377,13 +391,21 @@ export default function Home() {
 
                                     {item.isDone ? (
                                         <p>
-                                            <s style={{ opacity: "0.3" }}>
+                                            <s
+                                                style={{
+                                                    opacity: "0.3",
+                                                    wordBreak: "break-all",
+                                                }}
+                                            >
                                                 {item.todo}
                                             </s>
                                         </p>
                                     ) : (
                                         <>
                                             <p
+                                                style={{
+                                                    wordBreak: "break-all",
+                                                }}
                                                 onClick={() =>
                                                     handleUpdate(item.id)
                                                 }

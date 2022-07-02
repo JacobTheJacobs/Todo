@@ -46,15 +46,7 @@ export default function Logs({ todoArray, user, todoDb }) {
                     ) : null}
                 </motion.div>
             </div>
-            <div
-                style={{
-                    position: "absolute",
-                    left: "150px",
-                    width: "200px",
-                    border: "3px solid green",
-                    textAlign: "center",
-                }}
-            >
+            <div className={styles.log_left}>
                 <motion.div
                     whileHover={{
                         position: "relative",
@@ -68,7 +60,7 @@ export default function Logs({ todoArray, user, todoDb }) {
                     }}
                 >
                     {" "}
-                    <h3> LOCAL </h3>
+                    <h3 className={styles.text_title}> LOCAL </h3>
                 </motion.div>
 
                 <hr></hr>
@@ -77,7 +69,14 @@ export default function Logs({ todoArray, user, todoDb }) {
                         <div key={todo.id}>
                             <div>id: {todo.id}</div>
                             <span></span>
-                            <div> todo: {todo.todo} </div>
+                            <div
+                                style={{
+                                    wordBreak: "break-all",
+                                }}
+                            >
+                                {" "}
+                                todo: {todo.todo}{" "}
+                            </div>
                             <div>isDone: {todo.isDone ? "DONE" : "UNDONE"}</div>
                             <br></br>
                         </div>
@@ -85,15 +84,7 @@ export default function Logs({ todoArray, user, todoDb }) {
                 })}
             </div>
 
-            <div
-                style={{
-                    position: "absolute",
-                    right: "150px",
-                    width: "200px",
-                    border: "3px solid red",
-                    textAlign: "center",
-                }}
-            >
+            <div className={styles.log_right}>
                 <motion.div
                     whileHover={{
                         position: "relative",
@@ -107,7 +98,7 @@ export default function Logs({ todoArray, user, todoDb }) {
                     }}
                 >
                     {" "}
-                    <h3> DATABASE </h3>
+                    <h3 className={styles.text_title}> DATABASE </h3>
                 </motion.div>
 
                 <hr></hr>
@@ -116,7 +107,14 @@ export default function Logs({ todoArray, user, todoDb }) {
                         <div key={todo.id}>
                             <div>id: {todo.id}</div>
                             <span></span>
-                            <div> todo: {todo.todo} </div>
+                            <div
+                                style={{
+                                    wordBreak: "break-all",
+                                }}
+                            >
+                                {" "}
+                                todo: {todo.todo}{" "}
+                            </div>
                             <div>isDone: {todo.isDone ? "DONE" : "UNDONE"}</div>
                             <br></br>
                         </div>

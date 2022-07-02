@@ -10,7 +10,7 @@ import {
     ModalFooter,
     Progress,
 } from "reactstrap";
-const URL = "http://localhost:8000/login/";
+const URL = "https://django-auth-jjjjjjjjjjjjj.herokuapp.com/login/";
 export default function Login({ modalOpen, setModalOpen }) {
     const [username, setUserName] = useState("");
     const [password, setPassword] = useState("");
