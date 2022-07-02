@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/Todo.module.css";
 import Head from "next/head";
-import { ReactSortable } from "react-sortablejs";
 import { motion } from "framer-motion";
+import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
+import Login from "./Login";
+import Logs from "./Logs";
+import { ReactSortable } from "react-sortablejs";
 
-const URL = "https://django-deploy-jjjjj.herokuapp.com/todo/";
+//const URL = "https://django-deploy-jjjjj.herokuapp.com/todo/";
+const URL = "http://localhost:8000/todo/";
 export default function Home() {
     //initial todo
     const [todoArray, setTodoArray] = useState([]);
@@ -16,9 +20,13 @@ export default function Home() {
     const [id, setId] = useState(-1);
     //for state showing todo db
     const [todoDb, setTodoDb] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [user, setUser] = useState(false);
 
     //fetch data from api
     useEffect(() => {
+        //get access token from session
+
         if (!todoInitialized) {
             fetch(URL)
                 .then((res) => {
@@ -33,8 +41,10 @@ export default function Home() {
                 //if something happend retunr error
                 .catch((err) => {
                     console.log(err);
+                    //redirect to login
                 });
         }
+
         //set initialized to true to stop the insane loop
         setTodoInitialized(true);
     }, [todoInitialized]);
@@ -178,6 +188,7 @@ export default function Home() {
             .catch((err) => {
                 console.log(err);
             });
+        window.location.reload();
     };
 
     //Discard changes
@@ -185,6 +196,7 @@ export default function Home() {
         //get data from localStorage
         const localStorageData = JSON.parse(localStorage.getItem("todo"));
         setTodoArray(localStorageData);
+        window.location.reload();
     };
 
     return (
@@ -217,21 +229,7 @@ export default function Home() {
                     marginBottom: "60px",
                 }}
             >
-                <motion.div
-                    whileHover={{
-                        position: "relative",
-                        zIndex: 1,
-                        background: "white",
-                        scale: [1, 1.4, 1.2],
-                        rotate: [0, 10, -10, 0],
-                        transition: {
-                            duration: 0.2,
-                        },
-                    }}
-                >
-                    {" "}
-                    <h1 style={{ fontSize: "3rem", color: "#4CAF50" }}>TODO</h1>
-                </motion.div>
+                <Login modalOpen={modalOpen} setModalOpen={setModalOpen} />
                 {/*TITLE*/}
                 <br></br>
                 {/*STATE BUTTONS*/}
@@ -256,19 +254,31 @@ export default function Home() {
                             }}
                         >
                             {" "}
-                            <button
+                            <motion.button
+                                whileHover={{
+                                    scale: 1.1,
+                                    transition: {
+                                        duration: 0.8,
+                                    },
+                                }}
                                 className={styles.stateBtn}
                                 onClick={handleSaveLocalChanges}
                             >
                                 SAVE STATE
-                            </button>
-                            <button
+                            </motion.button>
+                            <motion.button
+                                whileHover={{
+                                    scale: 1.1,
+                                    transition: {
+                                        duration: 0.8,
+                                    },
+                                }}
                                 className={styles.stateBtn}
                                 style={{ backgroundColor: "red" }}
                                 onClick={handleDiscardLocalChanges}
                             >
                                 DISCARD STATE
-                            </button>
+                            </motion.button>
                         </motion.div>
                     ) : (
                         "State is not changed Yet"
@@ -409,60 +419,7 @@ export default function Home() {
             <br></br>
             <hr></hr>
             {/*LOGS*/}
-            <div
-                style={{
-                    textAlign: "center",
-                }}
-            >
-                <h1>Show a list of changes (if any) at any given time</h1>
-            </div>
-            <div
-                style={{
-                    position: "absolute",
-                    left: "150px",
-                    width: "200px",
-                    border: "3px solid green",
-                    textAlign: "center",
-                }}
-            >
-                <h3> LOCAL </h3>
-                <hr></hr>
-                {todoArray?.map((todo) => {
-                    return (
-                        <div key={todo.id}>
-                            <div>id: {todo.id}</div>
-                            <span></span>
-                            <div> todo: {todo.todo} </div>
-                            <div>isDone: {todo.isDone ? "DONE" : "UNDONE"}</div>
-                            <br></br>
-                        </div>
-                    );
-                })}
-            </div>
-
-            <div
-                style={{
-                    position: "absolute",
-                    right: "150px",
-                    width: "200px",
-                    border: "3px solid red",
-                    textAlign: "center",
-                }}
-            >
-                <h3> DATABASE </h3>
-                <hr></hr>
-                {todoDb?.map((todo) => {
-                    return (
-                        <div key={todo.id}>
-                            <div>id: {todo.id}</div>
-                            <span></span>
-                            <div> todo: {todo.todo} </div>
-                            <div>isDone: {todo.isDone ? "DONE" : "UNDONE"}</div>
-                            <br></br>
-                        </div>
-                    );
-                })}
-            </div>
+            <Logs user={user} todoArray={todoArray} todoDb={todoDb} />
             {/*LOGS*/}
         </>
     );

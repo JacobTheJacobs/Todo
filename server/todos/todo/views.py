@@ -81,14 +81,21 @@ def todo_list(request):
                         #if error return error message and status code
                         return JsonResponse(todo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
              else:
-                #if was not found in database add it
-                todo_serializer = TodoSerializer(data=todo)
-                #if valid save
-                if todo_serializer.is_valid():
-                    todo_serializer.save()
+                 #check for the same id
+                tmp_db_todo_list_id=[db_todo['id'] for db_todo in list_of_todos]
+                if todo["id"] in tmp_db_todo_list_id:
+                    print("todo: ", todo)
+                    pass
+               
                 else:
-                    #if error return error message and status code
-                   return JsonResponse(todo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                    #if was not found in database add it
+                    todo_serializer = TodoSerializer(data=todo)
+                    #if valid save
+                    if todo_serializer.is_valid():
+                        todo_serializer.save()
+                    else:
+                        #if error return error message and status code
+                        return JsonResponse(todo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         #Success message
         token = {'Response': 'Allright Allright Allright'}
         return JsonResponse(token, status=status.HTTP_201_CREATED)

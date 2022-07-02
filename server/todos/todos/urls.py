@@ -18,7 +18,18 @@ from django.urls import path
 from django.urls import re_path as url
 from django.conf.urls import include 
  
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+    
+)
+
 urlpatterns = [ 
     url('admin/', admin.site.urls),       
     url('', include('todo.urls')),
+    url('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    url('refresh-token/', TokenRefreshView.as_view(), name='token_refresh'),
+    url('verify-token/', TokenVerifyView.as_view(), name='token_verify'),
+
 ]

@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "framer-motion": "^6.3.16",
+    "jsonwebtoken": "^8.5.1",
     "next": "12.2.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-sortablejs": "^6.1.4",
+    "reactstrap": "^9.1.1",
     "sortablejs": "^1.15.0"
   },
   "devDependencies": {
