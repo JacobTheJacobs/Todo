@@ -221,22 +221,10 @@ export default function Home() {
         <>
             {/*HEAD TAG*/}
             <Head>
-                <title>
-                    Todo app with ThemeSwitch and localStorage | Next.js and
-                    react-sortablejs
-                </title>
+                <title>Todo app</title>
                 <meta
                     name="keywords"
                     content="html, css, javaScript, theme, switch, nextjs, react-sortablejs, localStorage, frontend, mentor, react, todo, app,  front, end"
-                />
-                <meta
-                    name="description"
-                    content="This todo app was created using nextjs, sass, react-sortablejs, and localStorage. Chtodoenge by Frontend Mentor."
-                />
-                <link
-                    rel="shortcut icon"
-                    type="image/jpg"
-                    href="/images/favicon-32x32.png"
                 />
             </Head>
             {/*HEAD TAG*/}
@@ -274,7 +262,7 @@ export default function Home() {
                             {" "}
                             <motion.button
                                 whileHover={{
-                                    scale: 1.1,
+                                    scale: 1.09,
                                     transition: {
                                         duration: 0.8,
                                     },
@@ -286,13 +274,16 @@ export default function Home() {
                             </motion.button>
                             <motion.button
                                 whileHover={{
-                                    scale: 1.1,
+                                    scale: 1.09,
                                     transition: {
-                                        duration: 0.8,
+                                        duration: 0.2,
                                     },
                                 }}
                                 className={styles.stateBtn}
-                                style={{ backgroundColor: "red" }}
+                                style={{
+                                    backgroundColor: "hotpink",
+                                    opacity: 0.5,
+                                }}
                                 onClick={handleDiscardLocalChanges}
                             >
                                 DISCARD STATE
@@ -398,7 +389,6 @@ export default function Home() {
                                             <s
                                                 style={{
                                                     opacity: "0.3",
-                                                    wordBreak: "break-all",
                                                 }}
                                             >
                                                 {item.todo}
@@ -407,9 +397,6 @@ export default function Home() {
                                     ) : (
                                         <>
                                             <p
-                                                style={{
-                                                    wordBreak: "break-all",
-                                                }}
                                                 onClick={() =>
                                                     handleUpdate(item.id)
                                                 }
@@ -419,14 +406,15 @@ export default function Home() {
                                         </>
                                     )}
 
-                                    <div onClick={() => handleDelete(item.id)}>
+                                    <div
+                                        className={styles.deleteBtn}
+                                        onClick={() => handleDelete(item.id)}
+                                    >
                                         <div>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 width="26"
                                                 height="26"
-                                                viewBox="0 0 16 16"
-                                                className={styles.delete}
                                             >
                                                 <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
                                             </svg>
